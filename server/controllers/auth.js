@@ -82,3 +82,7 @@ export const register = asyncHandler(async (req, res) => {
   // const saveUser = await newUser.save();
   res.status(201).json(new apiResponse(200, user, "User created successfully"));
 });
+
+export const login = asyncHandler(async (req,res) => {
+  res.send("login")
+})

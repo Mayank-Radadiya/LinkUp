@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
@@ -9,14 +8,14 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { register } from "./controllers/auth.js";
-import { Router } from "express";
+import authRouter  from "./routers/auth.router.js";
+import dbConnection from "./Database/dbConnection.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
-const router = Router();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -29,23 +28,18 @@ app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 // File Storage
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/assets");
   },
   filename: function (req, file, cb) {
-    cb(
-      null,
-       Date.now() + path.extname(file.originalname)
-    );
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
 const upload = multer({ storage: storage });
 
 // Routes with Files
-
 app.post("/auth/register", upload.single("picturePath"), (req, res, next) => {
   if (!req.file) {
     // If no file was uploaded, continue to the register function
@@ -55,18 +49,22 @@ app.post("/auth/register", upload.single("picturePath"), (req, res, next) => {
   req.body.picturePath = req.file.path;
   register(req, res, next);
 });
+// Router for other Actions
+app.use("/auth", authRouter);
 
+// Database Connection
+// const PORT = process.env.PORT || 6001;
 
-// Routes without Files
+// export const dbConnection = () => {
+//   mongoose
+//     .connect(process.env.MONGODB_URL)
+//     .then(() => {
+//       app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+//     })
+//     .catch((error) => console.log(`${error} did not connect`));
+// };
+ await dbConnection();
+ 
+ const PORT = process.env.PORT || 6001;
 
-// const router = express.Router();
-
-// MongoDB Connection
-const PORT = process.env.PORT || 6001;
-
-mongoose
-  .connect(process.env.MONGODB_URL)
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-  })
-  .catch((error) => console.log(`${error} did not connect`));
+ app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
