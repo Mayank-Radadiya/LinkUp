@@ -8,8 +8,11 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { register } from "./controllers/auth.js";
-import authRouter  from "./routers/auth.router.js";
 import dbConnection from "./Database/dbConnection.js";
+import { verifyToken } from "./middleware/auth.middleware.js";
+import authRouter from "./routers/auth.router.js";
+import userRouter from "./routers/user.access.js";
+import postRouter from "./routers/post.route.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +30,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
+//-----------------------------------------------------------------------------
 // File Storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -49,22 +53,16 @@ app.post("/auth/register", upload.single("picturePath"), (req, res, next) => {
   req.body.picturePath = req.file.path;
   register(req, res, next);
 });
+
 // Router for other Actions
 app.use("/auth", authRouter);
+app.use("/user", userRouter);
+app.use("/posts", postRouter);
 
+//-----------------------------------------------------------------------------
 // Database Connection
-// const PORT = process.env.PORT || 6001;
+await dbConnection();
 
-// export const dbConnection = () => {
-//   mongoose
-//     .connect(process.env.MONGODB_URL)
-//     .then(() => {
-//       app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-//     })
-//     .catch((error) => console.log(`${error} did not connect`));
-// };
- await dbConnection();
- 
- const PORT = process.env.PORT || 6001;
+const PORT = process.env.PORT || 6001;
 
- app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));

@@ -83,6 +83,61 @@ export const register = asyncHandler(async (req, res) => {
   res.status(201).json(new apiResponse(200, user, "User created successfully"));
 });
 
-export const login = asyncHandler(async (req,res) => {
-  res.send("login")
-})
+
+/* LOGIN USER */
+
+export const login = asyncHandler(async (req, res) => {
+  //   In your frontend, ensure that when sending form data, you're using the appropriate Content-Type header:
+  // For x-www-form-urlencoded: Content-Type: application/x-www-form-urlencoded
+  // For form-data: Content-Type: multipart/form-data
+
+  //If you're using fetch or axios in your frontend, make sure you're formatting the data correctly for the chosen content type.
+
+  const { emailOrUsername, password } = req.body;
+
+  if (!emailOrUsername || !password) {
+    throw new apiError(400, "Email/Username and password are required");
+  }
+
+  // Find user by email or username
+  const user = await User.findOne({
+    $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+  });
+
+  if (!user) {
+    throw new apiError(401, "Invalid credentials");
+  }
+
+  // Check password
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    throw new apiError(401, "Invalid password Enter correct password");
+  }
+
+  // Generate JWT token
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "5d",
+  });
+
+  // Remove password from user object
+
+  const userWithoutPassword = user.toObject();
+  delete userWithoutPassword.password;
+
+  res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        { user: userWithoutPassword, token },
+        "Login successful"
+      )
+    );
+});
+
+
+
+
+
+
