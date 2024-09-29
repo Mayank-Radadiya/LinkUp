@@ -87,12 +87,6 @@ export const register = asyncHandler(async (req, res) => {
 /* LOGIN USER */
 
 export const login = asyncHandler(async (req, res) => {
-  //   In your frontend, ensure that when sending form data, you're using the appropriate Content-Type header:
-  // For x-www-form-urlencoded: Content-Type: application/x-www-form-urlencoded
-  // For form-data: Content-Type: multipart/form-data
-
-  //If you're using fetch or axios in your frontend, make sure you're formatting the data correctly for the chosen content type.
-
   const { emailOrUsername, password } = req.body;
 
   if (!emailOrUsername || !password) {
@@ -112,21 +106,33 @@ export const login = asyncHandler(async (req, res) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    throw new apiError(401, "Invalid password Enter correct password");
+    throw new apiError(
+      401,
+      "Invalid password, please enter the correct password"
+    );
   }
 
   // Generate JWT token
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "5d",
+    expiresIn: "10d",
   });
 
   // Remove password from user object
-
   const userWithoutPassword = user.toObject();
   delete userWithoutPassword.password;
 
+  // Cookie options
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Use secure cookies only in production
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  };
+
+  // Set the token as a cookie and also in the Authorization header
   res
     .status(200)
+    .cookie("authorization", token, options)
+    .header("Authorization", `Bearer ${token}`) // Optional, depends on frontend handling
     .json(
       new apiResponse(
         200,
@@ -135,6 +141,7 @@ export const login = asyncHandler(async (req, res) => {
       )
     );
 });
+
 
 
 

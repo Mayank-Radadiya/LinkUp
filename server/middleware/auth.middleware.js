@@ -2,12 +2,16 @@ import jwt from "jsonwebtoken";
 import { apiError } from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import dotenv from "dotenv";
-
+import User from "../model/User.js";
 dotenv.config();
 
 export const verifyToken = asyncHandler(async (req, res, next) => {
-  let token = req.headers.authorization;
-
+  let token =
+    req.cookies?.authorization ||
+    req.cookies?.accessToken ||
+    req.header("Authorization")?.replace("Bearer ", "") ||
+    req.header("authorization")?.replace("Bearer ", "");
+  console.log("token :   ===", token);
   // Check if the token is missing
   if (!token) {
     throw new apiError(401, "Unauthorized");
@@ -19,11 +23,14 @@ export const verifyToken = asyncHandler(async (req, res, next) => {
   }
 
   // Verify the token and decode it
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-  // Attach decoded user info to the request
-  req.user = decoded;
+  const user = await User.findById(decodedToken?.userId).select("-password");
+  if (!user) {
+    throw new apiError(401, "Invalid token - User not found");
+  }
 
+  req.user = user;
   // Proceed to the next middleware
   next();
 });

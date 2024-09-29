@@ -5,7 +5,7 @@ import { apiResponse } from "../utils/apiResponse.js";
 export const getUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findById(id);
-  res.status(200).json(apiResponse(200, "User fetched successfully", user));
+  res.status(200).json(new apiResponse(200, "User fetched successfully", user));
 });
 
 export const getUserFriends = asyncHandler(async (req, res) => {
@@ -22,19 +22,21 @@ export const getUserFriends = asyncHandler(async (req, res) => {
   );
   res
     .status(200)
-    .json(apiResponse(200, "Friends fetched successfully", formattedFriends));
+    .json(
+      new apiResponse(200, "Friends fetched successfully", formattedFriends)
+    );
 });
 
 export const addRemoveFriend = asyncHandler(async (req, res) => {
   const { id, friendId } = req.params;
-  
+
   const user = await User.findById(id);
   const friend = await User.findById(friendId);
 
-  if(user.friends.includes(friendId)){
+  if (user.friends.includes(friendId)) {
     user.friends = user.friends.filter((id) => id !== friendId);
     friend.friends = friend.friends.filter((id) => id !== id);
-  }else{
+  } else {
     user.friends.push(friendId);
     friend.friends.push(id);
   }
@@ -52,5 +54,9 @@ export const addRemoveFriend = asyncHandler(async (req, res) => {
     }
   );
 
-  res.status(200).json(apiResponse(200, "Friendship updated successfully", formattedFriends));
+  res
+    .status(200)
+    .json(
+      new apiResponse(200, "Friendship updated successfully", formattedFriends)
+    );
 });

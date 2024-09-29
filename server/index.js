@@ -13,6 +13,9 @@ import { verifyToken } from "./middleware/auth.middleware.js";
 import authRouter from "./routers/auth.router.js";
 import userRouter from "./routers/user.access.js";
 import postRouter from "./routers/post.route.js";
+import { createPost } from "./controllers/post.controller.js";
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,6 +56,7 @@ app.post("/auth/register", upload.single("picturePath"), (req, res, next) => {
   req.body.picturePath = req.file.path;
   register(req, res, next);
 });
+app.post("/posts", verifyToken, upload.single("picturePath"), createPost);
 
 // Router for other Actions
 app.use("/auth", authRouter);
@@ -60,6 +64,12 @@ app.use("/user", userRouter);
 app.use("/posts", postRouter);
 
 //-----------------------------------------------------------------------------
+//test
+app.get("/test", verifyToken, (req, res) => {
+  const user = req.user;
+  res.json({ user });
+});
+//
 // Database Connection
 await dbConnection();
 
