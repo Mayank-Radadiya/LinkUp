@@ -11,7 +11,7 @@ export const verifyToken = asyncHandler(async (req, res, next) => {
     req.cookies?.accessToken ||
     req.header("Authorization")?.replace("Bearer ", "") ||
     req.header("authorization")?.replace("Bearer ", "");
-  console.log("token :   ===", token);
+    console.log("token :   ===", token);
   // Check if the token is missing
   if (!token) {
     throw new apiError(401, "Unauthorized");
