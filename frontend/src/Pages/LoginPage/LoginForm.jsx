@@ -84,39 +84,21 @@ const LoginForm = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const formData = new FormData();
-    const data = Object.fromEntries(formData.entries());
     try {
       const loggedInResponse = await axios.post(
         "http://localhost:3001/auth/login",
-        data, // Send values as the body
+        values, // Send values as the body
         {
           withCredentials: true, // Include credentials in the same object
         }
       );
-      if (response.status === 200) {
-        console.log("Login successful:", response.data);
-        // Handle successful login (e.g., redirect or show success message)
-      } else {
-        console.error("Login failed:", response.data);
-        // Handle login failure (e.g., show error message)
-      }
 
-      if (response.status === 200) {
-        console.log("Login successful");
-        // Handle successful login (e.g., redirect or show success message)
-      } else {
-        console.error("Login failed");
-        // Handle login failure (e.g., show error message)
-      }
-      const loggedIn = loggedInResponse.data; // Axios handles JSON automatically
-      onSubmitProps.resetForm();
-
-      if (loggedIn) {
+      if (loggedInResponse.status === 200) {
+        console.log("Login successful:", loggedInResponse.data);
         dispatch(
           setLogin({
-            user: loggedIn.user,
-            token: loggedIn.token,
+            user: loggedInResponse.data.user,
+            token: loggedInResponse.data.token,
           })
         );
         navigate("/home");
@@ -133,7 +115,7 @@ const LoginForm = () => {
 
   return (
     <Formik
-      onSubmit={handleFormSubmit}
+      onSubmit={(e) => handleFormSubmit(e)}
       initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
       validationSchema={isLogin ? loginSchema : registerSchema}
     >
