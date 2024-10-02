@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 function Login() {
   const handleSubmit = async (event) => {
@@ -7,14 +8,24 @@ function Login() {
     const data = Object.fromEntries(formData.entries()); // Converts formData to a plain object
 
     try {
-     const response = await fetch("http://localhost:3001/auth/login", {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify(data),
-        credentials: "include", // This ensures cookies are sent with the request
-      });
+      const response = await axios.post(
+        "http://localhost:3001/auth/login",
+        data,
+        {
+          withCredentials: true,
+        },
+        {
+          credentials: "include",
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Login successful:", response.data);
+        // Handle successful login (e.g., redirect or show success message)
+      } else {
+        console.error("Login failed:", response.data);
+        // Handle login failure (e.g., show error message)
+      }
 
       if (response.status === 200) {
         console.log("Login successful");

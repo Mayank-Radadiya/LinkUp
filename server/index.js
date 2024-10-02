@@ -14,8 +14,7 @@ import authRouter from "./routers/auth.router.js";
 import userRouter from "./routers/user.access.js";
 import postRouter from "./routers/post.route.js";
 import { createPost } from "./controllers/post.controller.js";
-
-
+import cookieParser from "cookie-parser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,11 +30,11 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
-
+app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your React app's URL
-    credentials: true, // Allow credentials (cookies)
+    origin: "http://localhost:5173", // if website is on different port change this .....
+    credentials: true,
   })
 );
 
@@ -64,17 +63,11 @@ app.post("/auth/register", upload.single("picturePath"), (req, res, next) => {
 });
 app.post("/posts", verifyToken, upload.single("picturePath"), createPost);
 
-// Router for other Actions
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/posts", postRouter);
 
 //-----------------------------------------------------------------------------
-//test
-app.get("/test", verifyToken, (req, res) => {
-  const user = req.user;
-  res.json({ user });
-});
 //
 // Database Connection
 await dbConnection();

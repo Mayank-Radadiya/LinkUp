@@ -121,20 +121,17 @@ export const login = asyncHandler(async (req, res) => {
   const userWithoutPassword = user.toObject();
   delete userWithoutPassword.password;
 
-
   // Cookie options
- const options = {
-   httpOnly: true,
-   secure: process.env.NODE_ENV === "production", // Use secure cookies only in production
-   maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
- };
-
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Use secure cookies only in production
+    maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
+  };
 
   // Set the token as a cookie and also in the Authorization header
   res
     .status(200)
     .cookie("authorization", token, options)
-    .cookie("accessToken", token, options)
     .header("Authorization", `Bearer ${token}`) // Optional, depends on frontend handling
     .json(
       new apiResponse(
