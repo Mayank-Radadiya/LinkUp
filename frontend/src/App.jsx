@@ -1,30 +1,35 @@
 import "./App.css";
-import Login from "./components/Login";
-import axios from "axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./Pages/HomePage/Home";
+import Login from "./Pages/LoginPage/Login";
+import Register from "./Pages/LoginPage/Register";
+import Profile from "./Pages/ProfilePage/Profile";
+import { useSelector } from "react-redux";
+import { useMemo } from "react";
+import { createTheme } from "@mui/material/styles";
+import { themeSettings } from "./theme.js";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import Navbar from "./Pages/Navbar/Navbar.jsx";
 
 function App() {
-  async function fetchPosts() {
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/posts",
-        {
-          credentials: "include",
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
+  const mode  = useSelector( (state) => state.mode)
+  const theme = useMemo( () => createTheme(themeSettings(mode)), [mode])
+  
   return (
-    <>
-      <Login />
-      <button onClick={fetchPosts}>Fetch Posts</button>
-    </>
+    <div className="app">
+      <BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Routes>
+          <Route path="/" element={<Navbar />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile/:userId" element={<Profile />} />
+          </Routes>
+        </ThemeProvider>
+      </BrowserRouter>
+    </div>
   );
 }
 
