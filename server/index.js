@@ -42,7 +42,7 @@ app.use(
 // File Storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/assets");
+    cb(null, "public/temp");
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -64,7 +64,7 @@ app.post("/auth/register", upload.single("picturePath"), (req, res, next) => {
 app.post("/posts", verifyToken, upload.single("picturePath"), createPost);
 
 app.use("/auth", authRouter);
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 app.use("/posts", postRouter);
 
 //-----------------------------------------------------------------------------

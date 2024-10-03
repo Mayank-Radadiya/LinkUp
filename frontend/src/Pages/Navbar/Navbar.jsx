@@ -23,27 +23,25 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "../../state/authSlice";
 import { useNavigate } from "react-router-dom";
-import FlexBetween from "../../css/FlexBox";
+import FlexBox from "../../css/FlexBox";
 
 function Navbar() {
-    const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const user = useSelector((state) => state.user);
-    const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
-    const theme = useTheme();
-    const neutralLight = theme.palette.neutral.light;
-    const dark = theme.palette.neutral.dark;
-    const background = theme.palette.background.default;
-    const primaryLight = theme.palette.primary.light;
-    const alt = theme.palette.background.alt;
-    console.log(user);
-    // const fullName = `${user.username}`;
-    const fullName = "John Doe";
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const background = theme.palette.background.default;
+  const primaryLight = theme.palette.primary.light;
+  const alt = theme.palette.background.alt;
+  const fullName = `${user.username}`;
   return (
-    <FlexBetween padding="1rem 6%" backgroundColor={alt}>
-      <FlexBetween gap="1.75rem">
+    <FlexBox padding="1rem 6%" backgroundColor={alt}>
+      <FlexBox gap="1.75rem">
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -59,7 +57,7 @@ function Navbar() {
           LINKUP
         </Typography>
         {isNonMobileScreens && (
-          <FlexBetween
+          <FlexBox
             backgroundColor={neutralLight}
             borderRadius="9px"
             gap="3rem"
@@ -69,13 +67,13 @@ function Navbar() {
             <IconButton>
               <Search />
             </IconButton>
-          </FlexBetween>
+          </FlexBox>
         )}
-      </FlexBetween>
+      </FlexBox>
 
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <FlexBetween gap="2rem">
+        <FlexBox gap="2rem">
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -110,7 +108,7 @@ function Navbar() {
               <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
             </Select>
           </FormControl>
-        </FlexBetween>
+        </FlexBox>
       ) : (
         <IconButton
           onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
@@ -141,7 +139,7 @@ function Navbar() {
           </Box>
 
           {/* MENU ITEMS */}
-          <FlexBetween
+          <FlexBox
             display="flex"
             flexDirection="column"
             justifyContent="center"
@@ -187,10 +185,10 @@ function Navbar() {
                 </MenuItem>
               </Select>
             </FormControl>
-          </FlexBetween>
+          </FlexBox>
         </Box>
       )}
-    </FlexBetween>
+    </FlexBox>
   );
 }
 

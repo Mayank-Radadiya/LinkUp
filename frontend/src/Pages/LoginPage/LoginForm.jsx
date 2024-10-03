@@ -13,9 +13,10 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "../../state/authSlice";
-import FlexBetween from "../../css/FlexBox";
+import FlexBox from "../../css/FlexBox";
 import Dropzone from "react-dropzone";
 import axios from "axios";
+
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
@@ -24,7 +25,7 @@ const registerSchema = yup.object().shape({
   password: yup.string().required("required"),
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
-  picture: yup.string().required("required"),
+  picturePath: yup.string().required("required"),
 });
 
 const loginSchema = yup.object().shape({
@@ -40,7 +41,7 @@ const initialValuesRegister = {
   password: "",
   location: "",
   occupation: "",
-  picture: "",
+  picturePath: "",
 };
 
 const initialValuesLogin = {
@@ -58,28 +59,70 @@ const LoginForm = () => {
   const isRegister = pageType === "register";
 
   // this allows us to send form info with image
+  //  const register = async (values, onSubmitProps) => {
+  //   try {
+  //     const formData = new FormData();
+
+  //     for (let key in values) {
+  //       if (key === "picturePath") {
+  //         formData.append("picturePath", values.picturePath);
+  //       } else {
+  //         formData.append(key, values[key]);
+  //       }
+  //     }
+
+  //     const savedUserResponse = await axios.post(
+  //       "http://localhost:3001/auth/register",
+  //       formData, // FormData goes here
+  //       {
+  //         withCredentials: true, // Add this to include credentials
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       }
+  //     );
+  //     const savedUser = savedUserResponse.data; // Axios auto-parses the response to JSON
+  //     console.log(savedUser);
+
+  //     if (savedUser) {
+  //       setPageType("login"); // Redirect to login after successful registration
+  //     }
+  //   } catch (error) {
+  //     console.error("Error registering:", error);
+  //   }
+  // };
   const register = async (values, onSubmitProps) => {
-    const formData = new FormData();
-    const data = Object.fromEntries(formData.entries()); // Converts formData to a plain
+    try {
+      const formData = new FormData();
 
-    for (let key in values) {
-      formData.append(key, values[key]);
-    }
-    formData.append("picturePath", values.picture.name);
-
-    const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
-      {
-        method: "POST",
-        body: formData,
+      for (let key in values) {
+        formData.append(key, values[key]);
       }
-    );
 
-    const savedUser = await savedUserResponse.json();
-    onSubmitProps.resetForm();
+      const savedUserResponse = await axios.post(
+        "http://localhost:3001/auth/register",
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
-    if (savedUser) {
-      setPageType("login");
+      const savedUser = savedUserResponse.data;
+      console.log(savedUser);
+
+      if (savedUser) {
+        setPageType("login");
+        // Show success message to user
+        alert("Registration successful! Please log in.");
+      }
+    } catch (error) {
+      console.error("Error registering:", error);
+      // Show error message to user
+      alert(
+        error.response?.data?.message ||
+          "Registration failed. Please try again."
+      );
+    } finally {
+      onSubmitProps.setSubmitting(false);
     }
   };
 
@@ -92,13 +135,13 @@ const LoginForm = () => {
           withCredentials: true, // Include credentials in the same object
         }
       );
+      onSubmitProps.resetForm();
 
-      if (loggedInResponse.status === 200) {
-        console.log("Login successful:", loggedInResponse.data);
+      if (loggedInResponse.data) {
         dispatch(
           setLogin({
-            user: loggedInResponse.data.user,
-            token: loggedInResponse.data.token,
+            user: loggedInResponse.data.data.user,
+            token: loggedInResponse.data.data.token,
           })
         );
         navigate("/home");
@@ -115,7 +158,7 @@ const LoginForm = () => {
 
   return (
     <Formik
-      onSubmit={(e) => handleFormSubmit(e)}
+      onSubmit={handleFormSubmit}
       initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
       validationSchema={isLogin ? loginSchema : registerSchema}
     >
@@ -194,6 +237,27 @@ const LoginForm = () => {
                   helperText={touched.occupation && errors.occupation}
                   sx={{ gridColumn: "span 4" }}
                 />
+                <TextField
+                  label="Email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
+                  name="email"
+                  error={Boolean(touched.email) && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  name="password"
+                  error={Boolean(touched.password) && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                  sx={{ gridColumn: "span 4" }}
+                />
                 <Box
                   gridColumn="span 4"
                   border={`1px solid ${palette.neutral.medium}`}
@@ -204,7 +268,7 @@ const LoginForm = () => {
                     acceptedFiles=".jpg,.jpeg,.png"
                     multiple={false}
                     onDrop={(acceptedFiles) =>
-                      setFieldValue("picture", acceptedFiles[0])
+                      setFieldValue("picturePath", acceptedFiles[0])
                     }
                   >
                     {({ getRootProps, getInputProps }) => (
@@ -215,13 +279,13 @@ const LoginForm = () => {
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
                         <input {...getInputProps()} />
-                        {!values.picture ? (
+                        {!values.picturePath ? (
                           <p>Add Picture Here</p>
                         ) : (
-                          <FlexBetween>
-                            <Typography>{values.picture.name}</Typography>
+                          <FlexBox>
+                            <Typography>{values.picturePath.name}</Typography>
                             <EditOutlinedIcon />
-                          </FlexBetween>
+                          </FlexBox>
                         )}
                       </Box>
                     )}
@@ -230,30 +294,34 @@ const LoginForm = () => {
               </>
             )}
 
-            <TextField
-              label="Email Or Username"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.ememailOrUsernameail}
-              name="emailOrUsername"
-              error={
-                Boolean(touched.emailOrUsername) &&
-                Boolean(errors.emailOrUsername)
-              }
-              helperText={touched.emailOrUsername && errors.emailOrUsername}
-              sx={{ gridColumn: "span 4" }}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.password}
-              name="password"
-              error={Boolean(touched.password) && Boolean(errors.password)}
-              helperText={touched.password && errors.password}
-              sx={{ gridColumn: "span 4" }}
-            />
+            {isLogin && (
+              <>
+                <TextField
+                  label="Email Or Username"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.emailOrUsername}
+                  name="emailOrUsername"
+                  error={
+                    Boolean(touched.emailOrUsername) &&
+                    Boolean(errors.emailOrUsername)
+                  }
+                  helperText={touched.emailOrUsername && errors.emailOrUsername}
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  name="password"
+                  error={Boolean(touched.password) && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                  sx={{ gridColumn: "span 4" }}
+                />
+              </>
+            )}
           </Box>
 
           {/* BUTTONS */}
