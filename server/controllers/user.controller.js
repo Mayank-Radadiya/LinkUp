@@ -1,6 +1,8 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import User from "../model/User.js";
 import { apiResponse } from "../utils/apiResponse.js";
+import mongoose from "mongoose";
+
 
 export const getUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -9,8 +11,21 @@ export const getUser = asyncHandler(async (req, res) => {
 });
 
 export const getUserFriends = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.user;
+  console.log(id);
+
+  const User = req.user;
+  console.log(User);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json(new apiResponse(400, "Invalid user ID", null));
+  }
+
   const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json(new apiResponse(404, "User not found", null));
+    }
+  console.log(user);
 
   const friends = await Promise.all(
     user.friends.map((id) => User.findById(id))

@@ -11,8 +11,7 @@ const app = express();
 app.use(cookieParser());
 
 export const verifyToken = asyncHandler(async (req, res, next) => {
-  console.log("req.cookies: ", req.cookies);
-  console.log("req.headers: ", req.headers);
+
 
   let token =
     req.cookies?.authorization ||
@@ -21,7 +20,6 @@ export const verifyToken = asyncHandler(async (req, res, next) => {
     req.header("authorization")?.replace("Bearer ", "") ||
     req.query.token; // Add support for token in query string
 
-  console.log("token: ", token);
 
   // Check if the token is missing
   if (!token) {

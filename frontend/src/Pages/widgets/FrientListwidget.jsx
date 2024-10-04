@@ -17,6 +17,9 @@ const FriendListWidget = ({ userId }) => {
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
+      },
+      {
+        withCredentials: true, // Include credentials in the same object
       }
     );
     const data = await response.json();

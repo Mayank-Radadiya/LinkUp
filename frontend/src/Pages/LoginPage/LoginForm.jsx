@@ -136,6 +136,7 @@ const LoginForm = () => {
         }
       );
       onSubmitProps.resetForm();
+      localStorage.setItem("authToken", loggedInResponse.data.data.token);
 
       if (loggedInResponse.data) {
         dispatch(
@@ -144,7 +145,7 @@ const LoginForm = () => {
             token: loggedInResponse.data.data.token,
           })
         );
-        navigate("/home");
+        navigate("/");
       }
     } catch (error) {
       console.error("Error logging in:", error);

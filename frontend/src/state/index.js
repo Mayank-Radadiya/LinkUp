@@ -11,6 +11,9 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { combineReducers } from "redux";
+
+
 
 const persistConfig = {
   key: "root",
@@ -22,6 +25,7 @@ const persistedReducer = persistReducer(persistConfig, authReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
+
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -31,5 +35,6 @@ const store = configureStore({
 });
 
 const persistor = persistStore(store);
+console.log(persistor);
 
 export { store, persistor };

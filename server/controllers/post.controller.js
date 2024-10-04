@@ -19,14 +19,15 @@ export const createPost = asyncHandler(async (req, res) => {
   });
   await newPost.save();
   const post = await Post.find();
-  res.status(201).json(new apiResponse(201, "Post created successfully", post));
+  res.status(201).json(new apiResponse(201, post ,"Post created successfully"));
 });
+
 
 export const getFeedPosts = async (req, res) => {
   const post = await Post.find();
   res
     .status(200)
-    .json(new apiResponse(200, "Posts fetched successfully", post));
+    .json(new apiResponse(200 , post, "Posts fetched successfully"));
 };
 
 export const getUserPosts = async (req, res) => {
@@ -34,7 +35,7 @@ export const getUserPosts = async (req, res) => {
   const post = await Post.find({ userId });
   res
     .status(200)
-    .json(new apiResponse(200, "Posts fetched successfully", post));
+    .json(new apiResponse(200 , post, "Posts fetched successfully"));
 };
 
 export const likePost = async (req, res) => {
@@ -50,5 +51,5 @@ export const likePost = async (req, res) => {
   const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes });
   res
     .status(200)
-    .json(new apiResponse(200, "Post liked successfully", updatedPost));
+    .json(new apiResponse(200, updatedPost, "Post liked successfully"));
 };

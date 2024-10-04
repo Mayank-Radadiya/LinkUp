@@ -10,10 +10,12 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Navigate } from "react-router-dom";
 import Login from "./Pages/LoginPage/LoginPage.jsx";
 
+
 function App() {
-  const mode  = useSelector( (state) => state.mode)
-  const theme = useMemo( () => createTheme(themeSettings(mode)), [mode])
+  const mode = useSelector((state) => state.mode);
+  const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const isAuth = Boolean(useSelector((state) => state.token));
+  console.log(isAuth);
 
   return (
     <div className="app">
@@ -21,14 +23,17 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<Login/>} />
             <Route
-              path="/home"
-              element={isAuth ? <Home/> : <Navigate to="/" />}
+              path="/login"
+              element={isAuth ? <Navigate to="/" /> : <Login />}
+            />
+            <Route
+              path="/"
+              element={isAuth ? <Home /> : <Navigate to="/login" />}
             />
             <Route
               path="/profile/:userId"
-              element={isAuth ? <Profile/> : <Navigate to="/" />}
+              element={isAuth ? <Profile /> : <Navigate to="/login" />}
             />
           </Routes>
         </ThemeProvider>

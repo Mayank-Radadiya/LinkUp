@@ -127,7 +127,6 @@ export const login = asyncHandler(async (req, res) => {
     secure: process.env.NODE_ENV === "production", // Use secure cookies only in production
     maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
   };
-
   // Set the token as a cookie and also in the Authorization header
   res
     .status(200)

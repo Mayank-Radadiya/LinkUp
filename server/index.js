@@ -42,7 +42,7 @@ app.use(
 // File Storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/temp");
+    cb(null, "public/assets");
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../state/authSlice";
 import PostWidget from "./PostWidget";
+import axios from "axios";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -9,26 +10,32 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const token = useSelector((state) => state.token);
 
   const getPosts = async () => {
-    const response = await fetch("http://localhost:3001/posts", {
-      method: "GET",
-    });
-    const data = await response.json();
-    dispatch(setPosts({ posts: data }));
+    try {
+      const response = await axios.get("http://localhost:3001/posts", {
+        withCredentials: true,
+      });
+      console.log(response.data);
+      if (response.data) {
+        dispatch(setPosts({ posts: response.data }));
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
-  console.log(posts);
 
   const getUserPosts = async () => {
-    const response = await fetch(
+    const response = await axios.get(
       `http://localhost:3001/posts/${userId}/posts`,
       {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true, // Include credentials in the same object
       }
     );
-    const data = await response.json();
-    dispatch(setPosts({ posts: data }));
+    dispatch(setPosts({ posts: response.data }));
   };
 
+console.log(posts);
   useEffect(() => {
     if (isProfile) {
       getUserPosts();
@@ -39,7 +46,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   return (
     <>
-      {posts.map(
+      {posts.data.map(
         ({
           _id,
           userId,
