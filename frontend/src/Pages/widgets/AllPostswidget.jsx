@@ -14,7 +14,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       const response = await axios.get("http://localhost:3001/posts", {
         withCredentials: true,
       });
-      console.log(response.data);
       if (response.data) {
         dispatch(setPosts({ posts: response.data }));
       } else {
@@ -35,7 +34,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     dispatch(setPosts({ posts: response.data }));
   };
 
-console.log(posts);
   useEffect(() => {
     if (isProfile) {
       getUserPosts();
@@ -46,7 +44,7 @@ console.log(posts);
 
   return (
     <>
-      {posts.data.map(
+      {posts.data?.map(
         ({
           _id,
           userId,

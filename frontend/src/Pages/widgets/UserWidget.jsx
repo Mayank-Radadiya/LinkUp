@@ -27,7 +27,7 @@ const UserWidget = ({ userId, picturePath }) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
-    setUser(data);
+    setUser(data?.data);
   };
 
   useEffect(() => {
@@ -41,6 +41,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const {
     firstName,
     lastName,
+    username,
     location,
     occupation,
     viewedProfile,
@@ -60,7 +61,20 @@ const UserWidget = ({ userId, picturePath }) => {
           <UserImage image={picturePath} />
           <Box>
             <Typography
-              variant="h4"
+              variant="h5"
+              color={dark}
+              fontWeight="700"
+              sx={{
+                "&:hover": {
+                  color: palette.primary.light,
+                  cursor: "pointer",
+                },
+              }}
+            >
+              Name : {firstName} {lastName}
+            </Typography>
+            <Typography
+              variant="h6"
               color={dark}
               fontWeight="500"
               sx={{
@@ -70,7 +84,7 @@ const UserWidget = ({ userId, picturePath }) => {
                 },
               }}
             >
-              {firstName} {lastName}
+              Username: {username}
             </Typography>
             <Typography color={medium}>
               {friends && friends.length > 0
