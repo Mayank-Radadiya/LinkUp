@@ -10,43 +10,19 @@ export const getUser = asyncHandler(async (req, res) => {
   res.status(200).json(new apiResponse(200, user, "User fetched successfully"));
 });
 
-// export const getUserFriends = asyncHandler(async (req, res) => {
-//  const userInfo = req.user;
 
-//   if (!mongoose.Types.ObjectId.isValid(userInfo.id)) {
-//     return res.status(400).json(new apiResponse(400, "Invalid user ID", null));
-//   }
-
-//   const user = await User.findById(userInfo.id);
-//     if (!user) {
-//       return res.status(404).json(new apiResponse(404, "User not found", null));
-//     }
-
-//   const friends = await Promise.all(
-//     user.friends.map((id) => User.findById(id))
-//   );
-//   const formattedFriends = friends.map(
-//     ({ _id, username, occupation, location, picturePath }) => {
-//       return { _id, username, occupation, location, picturePath };
-//     }
-//   );
-//   res
-//     .status(200)
-//     .json(
-//       new apiResponse(200, formattedFriends, "Friends fetched successfully")
-//     );
-// });
 export const getUserFriends = asyncHandler(async (req, res) => {
   const userInfo = req.user;
+  
 
-  if (!userInfo || !userInfo.id) {
+  if (!userInfo || !userInfo._id) {
     return res
       .status(400)
       .json(new apiResponse(400,null , "User information is missing"));
   }
 
   try {
-    const user = await User.findById(userInfo.id);
+    const user = await User.findById(userInfo._id);
     if (!user) {
       return res.status(404).json(new apiResponse(404, null, "User not found"));
     }
