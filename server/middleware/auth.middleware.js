@@ -18,7 +18,7 @@ export const verifyToken = asyncHandler(async (req, res, next) => {
     req.cookies?.accessToken ||
     req.header("Authorization")?.replace("Bearer ", "") ||
     req.header("authorization")?.replace("Bearer ", "") ||
-    req.query.token; // Add support for token in query string
+    req.query.token; 
 
 
   // Check if the token is missing
@@ -33,7 +33,6 @@ export const verifyToken = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    // Verify the token and decode it
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decodedToken?.userId).select("-password");
