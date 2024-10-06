@@ -50,6 +50,7 @@ export const register = asyncHandler(async (req, res) => {
   if (usernameExists) {
     return new apiError(400, "Username already in use");
   }
+  
   // Hash the password
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
