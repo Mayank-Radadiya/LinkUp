@@ -14,7 +14,6 @@ const userIds = [
 export const users = [
   {
     _id: userIds[0],
-    username: "test",
     firstName: "test",
     lastName: "me",
     email: "aaaaaaa@gmail.com",
@@ -31,7 +30,6 @@ export const users = [
   },
   {
     _id: userIds[1],
-    username: "Stave_12",
     firstName: "Steve",
     lastName: "Ralph",
     email: "thataaa@gmail.com",
@@ -48,7 +46,6 @@ export const users = [
   },
   {
     _id: userIds[2],
-    username: "Some_Guy",
     firstName: "Some",
     lastName: "Guy",
     email: "someguy@gmail.com",
@@ -65,7 +62,6 @@ export const users = [
   },
   {
     _id: userIds[3],
-    username: "Whatcha",
     firstName: "Whatcha",
     lastName: "Doing",
     email: "whatchadoing@gmail.com",
@@ -82,7 +78,6 @@ export const users = [
   },
   {
     _id: userIds[4],
-    username: "Jane_Doe",
     firstName: "Jane",
     lastName: "Doe",
     email: "janedoe@gmail.com",
@@ -99,7 +94,6 @@ export const users = [
   },
   {
     _id: userIds[5],
-    username: "Harvey_Dunn",
     firstName: "Harvey",
     lastName: "Dunn",
     email: "harveydunn@gmail.com",
@@ -116,7 +110,6 @@ export const users = [
   },
   {
     _id: userIds[6],
-    username: "Carly_Vowel",
     firstName: "Carly",
     lastName: "Vowel",
     email: "carlyvowel@gmail.com",
@@ -133,7 +126,6 @@ export const users = [
   },
   {
     _id: userIds[7],
-    username: "Jessica_Dunn",
     firstName: "Jessica",
     lastName: "Dunn",
     email: "jessicadunn@gmail.com",
@@ -154,7 +146,6 @@ export const posts = [
   {
     _id: new mongoose.Types.ObjectId(),
     userId: userIds[1],
-    username: "Stave_12",
     firstName: "Steve",
     lastName: "Ralph",
     location: "New York, CA",
@@ -176,7 +167,6 @@ export const posts = [
   {
     _id: new mongoose.Types.ObjectId(),
     userId: userIds[3],
-    username: "Whatcha",
     firstName: "Whatcha",
     lastName: "Doing",
     location: "Korea, CA",
@@ -200,7 +190,6 @@ export const posts = [
   {
     _id: new mongoose.Types.ObjectId(),
     userId: userIds[4],
-    username: "Jane_Doe",
     firstName: "Jane",
     lastName: "Doe",
     location: "Utah, CA",
@@ -225,7 +214,6 @@ export const posts = [
   {
     _id: new mongoose.Types.ObjectId(),
     userId: userIds[5],
-    username: "Harvey_Dunn",
     firstName: "Harvey",
     lastName: "Dunn",
     location: "Los Angeles, CA",
@@ -250,7 +238,6 @@ export const posts = [
   {
     _id: new mongoose.Types.ObjectId(),
     userId: userIds[6],
-    username: "Carly_Vowel",
     firstName: "Carly",
     lastName: "Vowel",
     location: "Chicago, IL",
@@ -275,7 +262,6 @@ export const posts = [
   {
     _id: new mongoose.Types.ObjectId(),
     userId: userIds[7],
-    username: "Jessica_Dunn",
     firstName: "Jessica",
     lastName: "Dunn",
     location: "Washington, DC",
